@@ -1,0 +1,50 @@
+stages:
+  - Prepare source code
+  - Compile
+  - Auto unit test
+
+variables:
+  REPO_PATH: "/home/gitlab-runner/ci-cd-demo"
+
+Prepare source code:
+  stage: Prepare source code
+  environment:
+    name: Staging
+    url: http://localhost:8080/
+  tags:
+    - ci-cd-demo
+  only:
+    - master
+    - merge_request
+  script:
+    - BRANCH_NAME=$CI_COMMIT_REF_NAME
+    - echo $BRANCH_NAME
+    - sh ./ci_script/prepare-source-code.sh $BRANCH_NAME
+
+Compile:
+  stage: Compile
+  environment:
+    name: Staging
+    url: http://localhost:8080/
+  tags:
+    - ci-cd-demo
+  only:
+    - master
+    - merge_request
+  script:
+    - cd "$REPO_PATH"
+    - mvn clean package -DskipTests
+
+Auto unit test:
+  stage: Auto unit test
+  environment:
+    name: Staging
+    url: http://localhost:8080/
+  tags:
+    - ci-cd-demo
+  only:
+    - master
+    - merge_request
+  script:
+    - cd "$REPO_PATH"
+    - sh ./ci_script/auto-test.sh
