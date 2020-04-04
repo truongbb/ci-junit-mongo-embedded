@@ -1,0 +1,1 @@
+# ci-junit-mongo-embedded
